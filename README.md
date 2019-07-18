@@ -1,5 +1,5 @@
 # Droid HiPages
-I used MVVM with Android Architecture Components (ViewModel + LiveData). With the help of ViewModel and LiveData that helps the data survive from configuration change and makes the ViewModel decouple from View throught observers that makes it highly testable and easy to modify or fix.
+I used MVVM with Android Architecture Components ViewModel + LiveData that helps the data survive from configuration change and makes the ViewModel decouple from View through observers that makes it highly testable and easy to modify and fix.
 
 ### Features (Some are not used but I retain the code)
 * Dependency Injection using [Dagger](https://github.com/google/dagger)
