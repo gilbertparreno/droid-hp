@@ -9,8 +9,8 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.gp.base"
-        minSdkVersion 22
+        applicationId "com.droid.hp"
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -22,6 +22,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
@@ -41,6 +42,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
@@ -50,7 +52,7 @@ dependencies {
 
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_gson_version"
-    implementation  "com.squareup.okhttp3:okhttp:3.14.2"
+    implementation "com.squareup.okhttp3:okhttp:3.14.2"
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.2'
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -65,4 +67,6 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:2.8.47'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-RC3'
     testImplementation "android.arch.core:core-testing:1.1.1"
+
+    implementation "com.squareup.picasso:picasso:$picasso_version"
 }

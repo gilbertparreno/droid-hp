@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">base-project</string>
+    <string name="app_name">HiPages</string>
+
+    <string name="lbl_default_hiring_status">Connecting you with businesses</string>
+    <string name="lbl_hired">HIRED</string>
+    <string name="lbl_view_details">View Details</string>
+    <plurals name="lbl_hired_business">
+        <item quantity="one">You have hired %d business</item>
+        <item quantity="other">You have hired %d businesses</item>
+    </plurals>
 </resources>
