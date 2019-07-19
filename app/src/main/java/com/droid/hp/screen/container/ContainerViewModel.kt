@@ -33,7 +33,7 @@ class ContainerViewModel @Inject constructor(private val jobRepository: JobRepos
         disposable.add(jobRepository.getProjectList()
                 .subscribe(
                         { data ->
-                            mutableLiveTab.postValue(ApiResponse(data))
+                            mutableLiveTab.postValue(ApiResponse(data.jobs))
                         }, { throwable ->
                     mutableLiveTab.postValue(ApiResponse(throwable = throwable))
                 }

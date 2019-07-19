@@ -1,13 +1,14 @@
 package com.droid.hp.network.service
 
+import com.droid.hp.network.model.Job
 import com.droid.hp.network.model.Project
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 
-interface GithubService {
+interface JobService {
 
-    @GET("users/{user}/repos")
-    fun getProjectList(@Path("user") user: String): Single<List<Project>>
+    @GET("hipgrp-assets/tech-test/jobs.json")
+    fun getProjectList(): Single<Job>
 }

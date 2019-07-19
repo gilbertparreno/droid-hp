@@ -5,5 +5,5 @@ import com.droid.hp.network.model.Project
 import io.reactivex.Single
 
 interface JobRepositoryInteractor {
-    fun getProjectList() : Single<List<Job.JobsItem>>
+    fun getProjectList() : Single<Job>
 }
