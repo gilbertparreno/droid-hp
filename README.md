@@ -5,5 +5,6 @@ I used MVVM with Android Architecture Components ViewModel + LiveData that helps
 * Dependency Injection using [Dagger](https://github.com/google/dagger)
 * [Retrofit](https://square.github.io/retrofit/) x [RxJava & RxAndroid](https://github.com/ReactiveX/RxAndroid)
 * [Timber](https://github.com/JakeWharton/timber) for logs.
+* Room
 * Unit Testing
 * Continuous Integration using CircleCI
