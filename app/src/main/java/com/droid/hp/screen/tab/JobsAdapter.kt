@@ -21,19 +21,19 @@ class JobsAdapter : RecyclerView.Adapter<JobsAdapter.ItemViewHolder>() {
     val monthYearFormat = SimpleDateFormat("MMMM yyyy")
     val dayFormat = SimpleDateFormat("d")
 
-    private val jobs = mutableListOf<Job.JobsItem>()
+    private val jobs = mutableSetOf<Job.JobsItem>()
 
     fun addItems(newJobs: List<Job.JobsItem>) {
         val oldSize = jobs.size
         jobs.addAll(newJobs)
 
-        val newSize = newJobs.size
+        val newSize = jobs.size - oldSize
         notifyItemRangeInserted(oldSize, newSize)
     }
 
     fun removeItem(jobsItem: Job.JobsItem) {
         val index = jobs.indexOf(jobsItem)
-        jobs.removeAt(index)
+        jobs.remove(jobsItem)
         notifyItemRemoved(index)
     }
 
@@ -44,7 +44,7 @@ class JobsAdapter : RecyclerView.Adapter<JobsAdapter.ItemViewHolder>() {
     override fun getItemCount(): Int = jobs.size
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.bind(jobs[position])
+        holder.bind(jobs.elementAt(position))
     }
 
     private fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {
@@ -64,7 +64,7 @@ class JobsAdapter : RecyclerView.Adapter<JobsAdapter.ItemViewHolder>() {
 
             itemView.rvJobSeekers.apply {
                 val spanCount = when {
-                    item.connectedBusinesses == null -> 4
+                    item.connectedBusinesses.isNullOrEmpty() -> 4
                     item.connectedBusinesses.size < 4 -> item.connectedBusinesses.size
                     else -> 4
                 }

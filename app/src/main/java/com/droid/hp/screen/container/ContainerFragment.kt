@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,11 +19,12 @@ import com.droid.hp.network.model.ApiResponse
 import com.droid.hp.network.model.Job
 import com.droid.hp.screen.base.BaseFragment
 import com.droid.hp.screen.tab.TabView
+import com.droid.hp.utils.hasNetwork
 import kotlinx.android.synthetic.main.fragment_container.*
 import javax.inject.Inject
 
 
-class ContainerFragment : BaseFragment() {
+class ContainerFragment : BaseFragment(), TabPagerListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -43,13 +45,14 @@ class ContainerFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        retainInstance = true
         return inflater.inflate(R.layout.fragment_container, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews()
 
-        viewPager.adapter = TabPagerAdapter(fragmentManager!!)
+        viewPager.adapter = TabPagerAdapter(fragmentManager!!, this)
         viewPager.offscreenPageLimit = TabPagerAdapter.PAGE_COUNT
         tabLayout.setupWithViewPager(viewPager)
 
@@ -74,9 +77,15 @@ class ContainerFragment : BaseFragment() {
                                 (getItem(TabPagerAdapter.TAB2) as TabView).addJobs(closed)
                             }
                         }
+                    } else {
+                        (viewPager.adapter as TabPagerAdapter).apply {
+                            (getItem(TabPagerAdapter.TAB1) as TabView).onError()
+                            (getItem(TabPagerAdapter.TAB2) as TabView).onError()
+                        }
+                        Toast.makeText(context, resources.getString(R.string.generic_error), Toast.LENGTH_SHORT).show()
                     }
                 })
-        viewModel.getProjectList()
+        viewModel.getProjectList(hasNetwork(context!!)!!)
     }
 
     private fun initViews() {
@@ -89,6 +98,10 @@ class ContainerFragment : BaseFragment() {
             root.dividerPadding = 10
             root.dividerDrawable = drawable
         }
+    }
+
+    override fun onSwipeRefresh() {
+        viewModel.getProjectList(hasNetwork(context!!)!!)
     }
 
     companion object {

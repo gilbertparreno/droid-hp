@@ -4,8 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.droid.hp.network.model.ApiResponse
 import com.droid.hp.network.model.Job
-import com.droid.hp.network.repository.JobRepositoryInteractor
-import com.droid.hp.network.repository.JobRepositoryInteractorImpl
+import com.droid.hp.network.repository.job.JobRepositoryInteractor
+import com.droid.hp.network.repository.job.JobRepositoryInteractorImpl
 import com.droid.hp.network.service.JobService
 import com.droid.hp.screen.container.ContainerViewModel
 import io.reactivex.Single
