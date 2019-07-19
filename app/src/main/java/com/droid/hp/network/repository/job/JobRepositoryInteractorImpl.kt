@@ -3,6 +3,7 @@ package com.droid.hp.network.repository.job
 import com.droid.hp.network.model.Job
 import com.droid.hp.network.service.JobService
 import com.droid.hp.room.AppDatabase
+import com.droid.hp.room.dao.JobDao
 import com.droid.hp.room.entities.ConnectedBusinessesEntity
 import com.droid.hp.room.entities.JobConnectedBusinesses
 import com.droid.hp.room.entities.JobEntity
@@ -14,7 +15,7 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class JobRepositoryInteractorImpl @Inject constructor(val jobService: JobService, val localDatabase: AppDatabase) :
+class JobRepositoryInteractorImpl @Inject constructor(val jobService: JobService, val jobDao: JobDao) :
     JobRepositoryInteractor {
 
     override fun getJobs(): Single<Job> {
@@ -25,6 +26,7 @@ class JobRepositoryInteractorImpl @Inject constructor(val jobService: JobService
 
     override fun saveLocalJobs(jobItems: List<Job.JobsItem>): Completable {
         return Completable.create {
+            emitter ->
             val jobEntities = mutableListOf<JobEntity>()
             val connectedBusinesses = mutableListOf<ConnectedBusinessesEntity>()
             jobItems.forEach { jobItem ->
@@ -50,15 +52,17 @@ class JobRepositoryInteractorImpl @Inject constructor(val jobService: JobService
                 }
             }
 
-            localDatabase.jobDao().insertJobs(jobEntities)
-            localDatabase.jobDao().insertConnectedBusinesses(connectedBusinesses)
+            jobDao.insertJobs(jobEntities)
+            jobDao.insertConnectedBusinesses(connectedBusinesses)
+
+            emitter.onComplete()
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun getLocalJobs(): Single<List<JobConnectedBusinesses>> {
         return SingleCreate<List<JobConnectedBusinesses>> { emitter ->
-            emitter.onSuccess(localDatabase.jobDao().getAllJobs())
+            emitter.onSuccess(jobDao.getAllJobs())
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }

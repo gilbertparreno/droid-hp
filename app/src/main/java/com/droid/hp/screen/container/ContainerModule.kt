@@ -15,6 +15,6 @@ class ContainerModule {
     @Provides
     @ActivityScope
     fun providesProjectRepository(retrofit: Retrofit, appDatabase: AppDatabase): JobRepositoryInteractor {
-        return JobRepositoryInteractorImpl(retrofit.create(JobService::class.java), appDatabase)
+        return JobRepositoryInteractorImpl(retrofit.create(JobService::class.java), appDatabase.jobDao())
     }
 }

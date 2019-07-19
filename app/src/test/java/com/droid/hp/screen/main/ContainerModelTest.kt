@@ -1,13 +1,20 @@
 package com.droid.hp.screen.main
 
+import android.app.Instrumentation
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import com.droid.hp.network.model.ApiResponse
 import com.droid.hp.network.model.Job
 import com.droid.hp.network.repository.job.JobRepositoryInteractor
 import com.droid.hp.network.repository.job.JobRepositoryInteractorImpl
 import com.droid.hp.network.service.JobService
+import com.droid.hp.room.AppDatabase
+import com.droid.hp.room.dao.JobDao
 import com.droid.hp.screen.container.ContainerViewModel
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
@@ -35,6 +42,9 @@ class ContainerModelTest {
     @Mock
     lateinit var jobService: JobService
 
+    @Mock
+    lateinit var jobDao: JobDao
+
     lateinit var jobRepositoryInteractor: JobRepositoryInteractor
 
     lateinit var mainViewModel: ContainerViewModel
@@ -42,7 +52,8 @@ class ContainerModelTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        jobRepositoryInteractor = JobRepositoryInteractorImpl(jobService)
+
+        jobRepositoryInteractor = JobRepositoryInteractorImpl(jobService, jobDao)
         this.mainViewModel = ContainerViewModel(this.jobRepositoryInteractor)
 
         RxJavaPlugins.setIoSchedulerHandler { scheduler -> Schedulers.trampoline() }
@@ -50,7 +61,7 @@ class ContainerModelTest {
     }
 
     @Test
-    fun getProjectListTestSuccess() {
+    fun getProjectListTestSuccess()  {
         Mockito.`when`(this.jobService.getProjectList())
             .thenAnswer {
                 return@thenAnswer Single.just(Job())

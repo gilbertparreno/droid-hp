@@ -5,13 +5,16 @@ import com.droid.hp.network.model.ApiResponse
 import com.droid.hp.network.model.Job
 import com.droid.hp.network.repository.job.JobRepositoryInteractor
 import com.droid.hp.room.entities.JobEntity
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 
 class ContainerViewModel @Inject constructor(private val jobRepository: JobRepositoryInteractor) :
-    ViewModel(),
-    LifecycleObserver {
+        ViewModel(),
+        LifecycleObserver {
 
     private val mutableLiveTab = MutableLiveData<ApiResponse<List<Job.JobsItem>>>()
 
@@ -37,44 +40,47 @@ class ContainerViewModel @Inject constructor(private val jobRepository: JobRepos
     }
 
     private fun getJobsFromNetwork() {
+        val atomicReference = AtomicReference<Job>()
         disposable.add(
-            jobRepository.getJobs().subscribe(
-                { data ->
-                    jobRepository.saveLocalJobs(data.jobs).subscribe()
-                    mutableLiveTab.postValue(ApiResponse(data.jobs))
-                }, { throwable ->
-                    mutableLiveTab.postValue(ApiResponse(throwable = throwable))
-                }
-            ))
+                jobRepository.getJobs()
+                        .flatMapCompletable { data ->
+                            atomicReference.set(data)
+                            jobRepository.saveLocalJobs(data.jobs)
+                        }.subscribe({
+                            mutableLiveTab.postValue(ApiResponse(atomicReference.get().jobs))
+                        }, { throwable ->
+                            mutableLiveTab.postValue(ApiResponse(throwable = throwable))
+                        }
+                        ))
     }
 
     private fun getJobsFromLocal() {
         disposable.add(
-            jobRepository.getLocalJobs().subscribe({ local ->
-                val data = local.map { jobConnectedBusiness ->
-                    Job.JobsItem(
-                            jobId = jobConnectedBusiness.jobs.jobId,
-                            connectedBusinesses = jobConnectedBusiness.connectedBusinesses.map { businessEntity ->
-                                Job.JobsItem.ConnectedBusinessesItem(
-                                        thumbnail = businessEntity.thumbnail,
-                                        isHired = businessEntity.isHired,
-                                        businessId = businessEntity.id
-                                )
-                            },
-                            detailsLink = jobConnectedBusiness.jobs.detailsLink ?: "",
-                            category = jobConnectedBusiness.jobs.category ?: "",
-                            postedDate = jobConnectedBusiness.jobs.postedDate ?: "",
-                            status = jobConnectedBusiness.jobs.status ?: ""
-                    )
-                }
-                if (data.isNotEmpty()) {
-                    mutableLiveTab.postValue(ApiResponse(data))
-                } else {
-                    mutableLiveTab.postValue(ApiResponse(throwable = Throwable("No data in local.")))
-                }
-            }, { throwable ->
-                mutableLiveTab.postValue(ApiResponse(throwable = throwable))
-            })
+                jobRepository.getLocalJobs().subscribe({ local ->
+                    val data = local.map { jobConnectedBusiness ->
+                        Job.JobsItem(
+                                jobId = jobConnectedBusiness.jobs.jobId,
+                                connectedBusinesses = jobConnectedBusiness.connectedBusinesses.map { businessEntity ->
+                                    Job.JobsItem.ConnectedBusinessesItem(
+                                            thumbnail = businessEntity.thumbnail,
+                                            isHired = businessEntity.isHired,
+                                            businessId = businessEntity.id
+                                    )
+                                },
+                                detailsLink = jobConnectedBusiness.jobs.detailsLink ?: "",
+                                category = jobConnectedBusiness.jobs.category ?: "",
+                                postedDate = jobConnectedBusiness.jobs.postedDate ?: "",
+                                status = jobConnectedBusiness.jobs.status ?: ""
+                        )
+                    }
+                    if (data.isNotEmpty()) {
+                        mutableLiveTab.postValue(ApiResponse(data))
+                    } else {
+                        mutableLiveTab.postValue(ApiResponse(throwable = Throwable("No data in local.")))
+                    }
+                }, { throwable ->
+                    mutableLiveTab.postValue(ApiResponse(throwable = throwable))
+                })
         )
     }
 }
