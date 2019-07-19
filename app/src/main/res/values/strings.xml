@@ -8,4 +8,5 @@
         <item quantity="one">You have hired %d business</item>
         <item quantity="other">You have hired %d businesses</item>
     </plurals>
+    <string name="generic_error">Something went wrong.</string>
 </resources>
