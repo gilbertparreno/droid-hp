@@ -21,7 +21,7 @@ class App : Application() {
         }
 
         appComponent = DaggerAppComponent.builder()
-            .networkModule(NetworkModule("https://s3-ap-southeast-2.amazonaws.com/", BuildConfig.DEBUG))
+            .networkModule(NetworkModule(applicationContext,"https://s3-ap-southeast-2.amazonaws.com/", BuildConfig.DEBUG))
             .appModule(AppModule(this))
             .build()
     }
